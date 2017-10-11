@@ -14,19 +14,25 @@ export default class App extends React.Component {
     const username = API_USERNAME
     const password = API_PASSWORD
     const authToken = base64.encode(`${username}:${password}`)
+    const url = 'https://emtu.noxxonsat.com.br/rest/usuarios/v2?linha=356'
     console.log(authToken)
 
-    fetch(
-      'https://noxxonsat-nxnet.appspot.com/rest/usuarios/v2?linha=356', {
-        headers: {
-          'Authorization': `Basic ${authToken}`,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      }
-    ).then((response) => {
-      console.log(response);
-    });
+    const options = {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Authorization': `Basic ${authToken}`
+      },
+      mode: 'cors'
+    }
+    const request = new Request(url, options)
+
+    console.log(request);
+
+    fetch(request).
+      then(response => response.json()).
+      then(jsondata => console.log(jsondata)).
+      catch(error => console.log(error));
   }
 
   render() {
