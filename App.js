@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Button, FlatList } from 'react-native';
 import base64 from 'base-64';
 import { API_USERNAME, API_PASSWORD, API_URL } from 'react-native-dotenv';
-import MapView from 'react-native-maps';
+import { MapView } from 'expo';
 
 export default class App extends React.Component {
   state = {
@@ -58,14 +58,15 @@ export default class App extends React.Component {
           color="#841584"
         />
         <MapView
-        initialRegion={{
-          latitude: -23.56,
-          longitude: -46.69,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      />
-      <FlatList
+          style={styles.map}
+          initialRegion={{
+            latitude: 37.78825,
+            longitude: -122.4324,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+         }}
+        />
+        <FlatList
           data={this.state.data}
           renderItem={this.renderLine}
           keyExtractor={(item) => item.prefixo}
@@ -81,6 +82,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'navy',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  map: {
+    // flex: 1
   },
   line: {
     color: '#fff'
