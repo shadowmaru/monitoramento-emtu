@@ -1,9 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, FlatList } from 'react-native';
 import base64 from 'base-64';
-import { API_USERNAME, API_PASSWORD } from 'react-native-dotenv'
+import { API_USERNAME, API_PASSWORD, API_URL } from 'react-native-dotenv';
 
 export default class App extends React.Component {
+  state = {
+    data: []
+  }
+
   constructor() {
     super();
 
@@ -14,19 +18,33 @@ export default class App extends React.Component {
     const username = API_USERNAME
     const password = API_PASSWORD
     const authToken = base64.encode(`${username}:${password}`)
-    console.log(authToken)
+    const url = `${API_URL}?linha=356`
 
-    fetch(
-      'https://noxxonsat-nxnet.appspot.com/rest/usuarios/v2?linha=356', {
-        headers: {
-          'Authorization': `Basic ${authToken}`,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      }
-    ).then((response) => {
-      console.log(response);
-    });
+    const options = {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Authorization': `Basic ${authToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      mode: 'cors'
+    }
+    const request = new Request(url, options)
+
+    fetch(request).
+      then(response => response.json()).
+      // then(jsondata => console.log(jsondata)).
+      then(jsondata => {
+        this.setState({data: jsondata.linhas[0].veiculos});
+      }).
+      catch(error => console.log(error));
+  }
+
+  renderLine = ({item}) => {
+    return(
+      <Text style={styles.line}>{item.prefixo} - {item.latitude}, {item.longitude}</Text>
+    )
   }
 
   render() {
@@ -35,8 +53,13 @@ export default class App extends React.Component {
         <Text>Monitoramento EMTU</Text>
         <Button
           onPress={this.onPressFetchLines}
-          title="Buscar Linhas"
+          title="Buscar ônibus da linha 356"
           color="#841584"
+        />
+        <FlatList
+          data={this.state.data}
+          renderItem={this.renderLine}
+          keyExtractor={(item) => item.prefixo}
         />
       </View>
     );
@@ -50,4 +73,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  line: {
+    color: '#fff'
+  }
 });
