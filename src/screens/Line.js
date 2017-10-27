@@ -5,7 +5,11 @@ import { API_USERNAME, API_PASSWORD, API_URL } from 'react-native-dotenv';
 
 export default class Line extends React.Component {
   state = {
-    data: []
+    markers: []
+  }
+
+  static navigationOptions = {
+    title: '356'
   }
 
   componentDidMount() {
@@ -30,7 +34,7 @@ export default class Line extends React.Component {
       then(response => response.json()).
       // then(jsondata => console.log(jsondata)).
       then(jsondata => {
-        this.setState({data: jsondata.linhas[0].veiculos});
+        this.setState({markers: jsondata.linhas[0].veiculos});
       }).
       then(() => console.log(this.state)).
       catch(error => console.log(error));
@@ -46,7 +50,15 @@ export default class Line extends React.Component {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
-      />
+      >
+        {this.state.markers.map(marker => (
+          <MapView.Marker
+            key={marker.prefixo}
+            coordinate={{latitude: marker.latitude, longitude: marker.longitude}}
+            title={marker.prefixo}
+          />
+        ))}
+      </MapView>
     );
   }
 }
