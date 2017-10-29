@@ -8,15 +8,16 @@ export default class Line extends React.Component {
     markers: []
   }
 
-  static navigationOptions = {
-    title: '356'
-  }
+  static navigationOptions = ({ navigation }) => ({
+    title: `Linha ${navigation.state.params.line}`
+  });
 
   componentDidMount() {
-    const username = API_USERNAME
-    const password = API_PASSWORD
+    const { line }  = this.props.navigation.state.params
+    const username  = API_USERNAME
+    const password  = API_PASSWORD
     const authToken = base64.encode(`${username}:${password}`)
-    const url = `${API_URL}?linha=356`
+    const url       = `${API_URL}?linha=${line}`
 
     const options = {
       method: 'GET',
